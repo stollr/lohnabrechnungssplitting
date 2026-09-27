@@ -31,13 +31,19 @@ function errorExit(string $message, int $exitCode = 1): never
 /**
  * Ask the user for input.
  *
- * Empty input is not accepted and causes the question
- * to be repeated.
+ * If a default value is provided and the user enters nothing,
+ * the default value is returned.
  */
-function ask(string $question): string
+function ask(string $question, ?string $default = null): string
 {
     while (true) {
         echo $question;
+
+        if ($default !== null) {
+            echo " [{$default}]";
+        }
+
+        echo ": ";
 
         $input = fgets(STDIN);
 
@@ -49,6 +55,10 @@ function ask(string $question): string
         $input = trim($input);
 
         if ($input === '') {
+            if ($default !== null) {
+                return $default;
+            }
+
             echo "Ungültige Eingabe, bitte versuche es erneut\n";
             continue;
         }
@@ -138,10 +148,15 @@ $outputDir = rtrim($config['outputDir'], DIRECTORY_SEPARATOR);
 // Ask for password and month
 // ------------------------------------------------------------
 
-$password = ask("Passwort zur Entschlüsselung: ");
+$password = ask("Passwort zur Entschlüsselung");
+
+$currentMonth = date('n');
 
 do {
-    $monthInput = ask("Monat der Lohnabrechnungen (1-12): ");
+    $monthInput = ask(
+        "Monat der Lohnabrechnungen (1-12)",
+        $currentMonth
+    );
 
     if (
         filter_var($monthInput, FILTER_VALIDATE_INT) === false ||
@@ -260,7 +275,7 @@ foreach ($config['employees'] as $employee) {
     // Ask for and validate the page number.
     do {
         $pageInput = ask(
-            "Seite für {$employeeDisplayName}: "
+            "Seite für {$employeeDisplayName}"
         );
 
         if (
