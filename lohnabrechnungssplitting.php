@@ -72,8 +72,6 @@ function ask(string $question, ?string $default = null): string
  */
 function executeCommand(string $command): void
 {
-    echo "  > {$command}\n";
-
     $output = [];
     $returnCode = 0;
 
@@ -311,18 +309,15 @@ foreach ($config['employees'] as $employee) {
         . ' output '
         . escapeshellarg($employeeOutputFilename);
 
-    echo PHP_EOL;
-    echo "Verarbeite {$employeeDisplayName}, Seite {$page} ...\n";
-
     executeCommand($pdftkCommand);
 
     echo "  Erstellt: {$employeeOutputFilename}\n";
+    echo PHP_EOL;
 }
 
 // ------------------------------------------------------------
 // Finish
 // ------------------------------------------------------------
 
-echo PHP_EOL;
 echo "Alle Mitarbeiter wurden verarbeitet.\n";
 echo "Ausgabeverzeichnis: {$outputDir}\n";
